@@ -2,6 +2,14 @@
 
 ro.product.model=One M8
 
+#Device Info
+ro.device.chipset=Qualcomm MSM8974AB Snapdragon 801
+ro.device.cpu=Quad-Core 2.3 GHz Krait 400
+ro.device.gpu=Qualcomm Adreno 330
+ro.device.front_cam= 5 MP, 1080p@30fps, HDR
+ro.device.rear_cam=Dual 4 Ultra Pixel,autofocus, dual-LED Flash
+ro.device.screen_res=1080x1920 (~441 ppi pixel density)
+
 # RIL
 rild.libargs=-d /dev/smd0
 rild.libpath=/vendor/lib/libril-qc-qmi-1.so
