@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2011 The CyanogenMod Project
+# Copyright (C) 2014 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,62 +14,35 @@
 # limitations under the License.
 #
 
-# Device uses ultra-high-density artwork where available
-PRODUCT_AAPT_CONFIG := hdpi xhdpi xxhdpi
-PRODUCT_AAPT_PREF_CONFIG := xxhdpi
+$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
+$(call inherit-product, frameworks/native/build/phone-xxhdpi-2048-dalvik-heap.mk)
+$(call inherit-product-if-exists, frameworks/native/build/phone-xxhdpi-2048-hwui-memory.mk)
+$(call inherit-product-if-exists, vendor/htc/m8-common/m8-common-vendor.mk)
 
+# overlays
+DEVICE_PACKAGE_OVERLAYS += device/htc/m8/overlay
 
 # Boot animation
 TARGET_SCREEN_HEIGHT := 1920
 TARGET_SCREEN_WIDTH := 1080
 
-$(call inherit-product, $(SRC_TARGET_DIR)/product/languages_full.mk)
-$(call inherit-product, $(SRC_TARGET_DIR)/product/full_base_telephony.mk)
-$(call inherit-product, frameworks/native/build/phone-xxhdpi-2048-dalvik-heap.mk)
-$(call inherit-product-if-exists, frameworks/native/build/phone-xxhdpi-2048-hwui-memory.mk)
-
-# Audio configuration
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/audio/audio_policy.conf:system/etc/audio_policy.conf \
-    $(LOCAL_PATH)/audio/mixer_paths.xml:system/etc/mixer_paths.xml \
-    $(LOCAL_PATH)/audio/soundimage/srsfx_trumedia_ext.cfg:system/etc/soundimage/srsfx_trumedia_ext.cfg \
-    $(LOCAL_PATH)/audio/soundimage/srsfx_trumedia_ext_HS250.cfg:system/etc/soundimage/srsfx_trumedia_ext_HS250.cfg \
-    $(LOCAL_PATH)/audio/soundimage/srsfx_trumedia_ext_MAX300.cfg:system/etc/soundimage/srsfx_trumedia_ext_MAX300.cfg \
-    $(LOCAL_PATH)/audio/soundimage/srsfx_trumedia_int.cfg:system/etc/soundimage/srsfx_trumedia_int.cfg \
-    $(LOCAL_PATH)/audio/soundimage/srsmodels.lic:system/etc/soundimage/srsmodels.lic
-
-# this should go away when we finish blobs, our device-specific repos
-# should inherit m8-common by themselves
-$(call inherit-product-if-exists, vendor/htc/m8-common/m8-common-vendor.mk)
-
-## overlays
-DEVICE_PACKAGE_OVERLAYS += device/htc/m8/overlay
+# Device uses ultra-high-density artwork where available
+PRODUCT_AAPT_CONFIG := hdpi xhdpi xxhdpi
+PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 
 # Ramdisk
 PRODUCT_PACKAGES += \
     fstab.qcom \
-    init.network.sh \
-    init.qcom.audio.sh \
-    init.qcom.class_core.sh \
-    init.qcom.early_boot.sh \
-    init.qcom.factory.sh \
-    init.qcom.firmware_links.sh \
-    init.qcom.post_boot.sh \
     init.qcom.rc \
-    init.qcom.ril.sh \
-    init.qcom.sh \
-    init.qcom.ssr.sh \
-    init.qcom.syspart_fixup.sh \
     init.qcom.usb.rc \
     init.qcom.wifi.sh \
-    init.ril.rc \
-    init.usbdiag.sh \
     ueventd.qcom.rc
 
 # Qcom init scripts for /etc
-PRODUCT_COPY_FILES += \
-   $(LOCAL_PATH)/rootdir/etc/init.qcom.bt.bluedroid.sh:system/etc/init.qcom.bt.bluedroid.sh \
-   $(LOCAL_PATH)/rootdir/etc/init.qcom.bt.sh:system/etc/init.qcom.bt.sh
+PRODUCT_PACKAGES += \
+   init.qcom.bt.bluedroid.sh \
+   init.qcom.bt.sh
 
 # Permissions
 PRODUCT_COPY_FILES += \
@@ -96,7 +69,8 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.nfc.hce.xml:system/etc/permissions/android.hardware.nfc.hce.xml \
     frameworks/native/data/etc/com.nxp.mifare.xml:system/etc/permissions/com.nxp.mifare.xml \
     frameworks/native/data/etc/android.hardware.bluetooth_le.xml:system/etc/permissions/android.hardware.bluetooth_le.xml \
-    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml
+    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
+    device/htc/m8/configs/com.htc.software.market.xml:system/etc/permissions/com.htc.software.market.xml
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -108,13 +82,34 @@ PRODUCT_PACKAGES += \
     libaudio-resampler \
     tinymix
 
-# Target audio amp
 PRODUCT_PACKAGES += \
     libaudioamp
+
+# Audio configuration
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/audio/audio_policy.conf:system/etc/audio_policy.conf \
+    $(LOCAL_PATH)/audio/mixer_paths.xml:system/etc/mixer_paths.xml \
+    $(LOCAL_PATH)/audio/soundimage/srsfx_trumedia_ext.cfg:system/etc/soundimage/srsfx_trumedia_ext.cfg \
+    $(LOCAL_PATH)/audio/soundimage/srsfx_trumedia_ext_HS250.cfg:system/etc/soundimage/srsfx_trumedia_ext_HS250.cfg \
+    $(LOCAL_PATH)/audio/soundimage/srsfx_trumedia_ext_MAX300.cfg:system/etc/soundimage/srsfx_trumedia_ext_MAX300.cfg \
+    $(LOCAL_PATH)/audio/soundimage/srsfx_trumedia_int.cfg:system/etc/soundimage/srsfx_trumedia_int.cfg \
+    $(LOCAL_PATH)/audio/soundimage/srsmodels.lic:system/etc/soundimage/srsmodels.lic
 
 # Camera
 PRODUCT_PACKAGES += \
     camera.msm8974
+
+# Filesystem management tools
+PRODUCT_PACKAGES += \
+    make_ext4fs \
+    setup_fs
+
+# FM radio
+PRODUCT_PACKAGES += \
+    qcom.fmradio \
+    libqcomfm_jni \
+    FM2 \
+    FMRecord
 
 # Graphics
 PRODUCT_PACKAGES += \
@@ -125,18 +120,32 @@ PRODUCT_PACKAGES += \
     liboverlay \
     memtrack.msm8974
 
+# IPC router config
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/sec_config:system/etc/sec_config
+
+# Input device config
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/idc/projector_input.idc:system/usr/idc/projector_input.idc \
+    $(LOCAL_PATH)/idc/synaptics-rmi-touchscreen.idc:system/usr/idc/synaptics-rmi-touchscreen.idc
+
+# Keylayouts and Keychars
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/keylayout/keypad_8974.kl:system/usr/keylayout/keypad_8974.kl \
+    $(LOCAL_PATH)/keylayout/projector-Keypad.kl:system/usr/keylayout/projector-Keypad.kl \
+    $(LOCAL_PATH)/keylayout/synaptics-rmi-touchscreen.kl:system/usr/keylayout/synaptics-rmi-touchscreen.kl \
+    $(LOCAL_PATH)/keylayout/AK8789_HALL_SENSOR.kl:system/usr/keylayout/AK8789_HALL_SENSOR.kl
+
 # Lights
 PRODUCT_PACKAGES += \
     lights.msm8974
 
-# FM radio
-PRODUCT_PACKAGES += \
-    qcom.fmradio \
-    libqcomfm_jni \
-    FM2 \
-    FMRecord
+# Media config
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/media_codecs.xml:system/etc/media_codecs.xml \
+    $(LOCAL_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml
 
-# Nfc
+# NFC
 ifeq ($(TARGET_BUILD_VARIANT),user)
     NFCEE_ACCESS_PATH := device/htc/m8/configs/nfcee_access.xml
 else
@@ -145,7 +154,6 @@ endif
 PRODUCT_COPY_FILES += \
     $(NFCEE_ACCESS_PATH):system/etc/nfcee_access.xml
 
-# NFC
 PRODUCT_PACKAGES += \
     nfc.msm8974 \
     libnfc \
@@ -177,21 +185,17 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     qrngd
 
-# Touchscreen
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.input.noresample=1
+# Torch
+PRODUCT_PACKAGES += \
+    Torch
 
 # USB
 PRODUCT_PACKAGES += \
     com.android.future.usb.accessory
 
-# Filesystem management tools
+# Variant linking script
 PRODUCT_PACKAGES += \
-    make_ext4fs \
-    setup_fs
-
-PRODUCT_PACKAGES += \
-    libnetcmdiface
+    makelinks.sh
 
 # Wifi firmware
 PRODUCT_PACKAGES += \
@@ -206,94 +210,3 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf \
     $(LOCAL_PATH)/configs/p2p_supplicant_overlay.conf:system/etc/wifi/p2p_supplicant_overlay.conf
-
-# Media config
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/media_codecs.xml:system/etc/media_codecs.xml \
-    $(LOCAL_PATH)/configs/media_profiles.xml:system/etc/media_profiles.xml
-
-# IPC router config
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/sec_config:system/etc/sec_config
-
-# Keylayouts and Keychars
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/keylayout/keypad_8974.kl:system/usr/keylayout/keypad_8974.kl \
-    $(LOCAL_PATH)/keylayout/projector-Keypad.kl:system/usr/keylayout/projector-Keypad.kl \
-    $(LOCAL_PATH)/keylayout/synaptics-rmi-touchscreen.kl:system/usr/keylayout/synaptics-rmi-touchscreen.kl \
-    $(LOCAL_PATH)/keylayout/AK8789_HALL_SENSOR.kl:system/usr/keylayout/AK8789_HALL_SENSOR.kl
-
-# Input device config
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/idc/projector_input.idc:system/usr/idc/projector_input.idc \
-    $(LOCAL_PATH)/idc/synaptics-rmi-touchscreen.idc:system/usr/idc/synaptics-rmi-touchscreen.idc
-
-# Recovery
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.cwm.enable_key_repeat=true \
-    ro.cwm.repeatable_keys=114,115 \
-    ro.cwm.forbid_format=/boot,/devlog,/fataldevlog,/reserve,/firmware/radio,/firmware/adsp,/firmware/wcnss,/custdata \
-    ro.cwm.forbid_mount=/boot,/devlog,/fataldevlog,/reserve,/firmware/radio,/firmware/adsp,/firmware/wcnss,/custdata
-
-# Misc Packages
-PRODUCT_PACKAGES += \
-    Torch
-
-# Variant linking script
-PRODUCT_PACKAGES += \
-    makelinks.sh
-
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    persist.sys.usb.config=mtp
-
-# Common build properties
-PRODUCT_PROPERTY_OVERRIDES += \
-    debug.nfc.fw_download=true \
-    debug.nfc.fw_boot_download=false \
-    com.qc.hardware=true \
-    debug.composition.type=dyn \
-    debug.egl.hw=1 \
-    debug.mdpcomp.logs=0 \
-    debug.sf.hw=1 \
-    dev.pm.dyn_samplingrate=1 \
-    lpa.decode=true \
-    persist.hwc.mdpcomp.enable=true \
-    persist.thermal.monitor=true \
-    ro.sf.lcd_density=480 \
-    ro.telephony.call_ring.multiple=0 \
-    ro.use_data_netmgrd=true \
-    wifi.interface=wlan0 \
-    ro.vendor.extension_library=/vendor/lib/libqc-opt.so \
-    rild.libpath=/vendor/lib/libril-qc-qmi-1.so \
-    ro.baseband.arch=msm \
-    persist.radio.jbims=1 \
-    persist.rild.nitz_plmn="" \
-    persist.rild.nitz_long_ons_0="" \
-    persist.rild.nitz_long_ons_1="" \
-    persist.rild.nitz_long_ons_2="" \
-    persist.rild.nitz_long_ons_3="" \
-    persist.rild.nitz_short_ons_0="" \
-    persist.rild.nitz_short_ons_1="" \
-    persist.rild.nitz_short_ons_2="" \
-    persist.rild.nitz_short_ons_3="" \
-    ril.subscription.types=NV,RUIM \
-    DEVICE_PROVISIONED=1 \
-    ro.use_data_netmgrd=true \
-    persist.data.netmgrd.qos.enable=true \
-    ro.data.large_tcp_window_size=true \
-    ro.ril.hsdpa.category=14 \
-    ro.ril.hsupa.category=6 \
-    ro.ril.hsxpa=4 \
-    ro.ril.disable.cpc=1 \
-    ro.ril.def.agps.mode=1 \
-    persist.gps.qc_nlp_in_use=0 \
-    ro.gps.agps_provider=1 \
-    ro.qc.sdk.izat.premium_enabled=0 \
-    ro.qc.sdk.izat.service_mask=0x0 \
-    tunnel.audio.encode=true \
-    ro.qc.sdk.audio.fluencetype=fluence \
-    persist.audio.fluence.voicecall=true \
-    persist.audio.fluence.speaker=true \
-    audio.offload.buffer.size.kb=32 \
-    audio.offload.gapless.enabled=false \
-    ro.opengles.version=196608
