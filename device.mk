@@ -37,7 +37,6 @@ PRODUCT_PACKAGES += \
     fstab.qcom \
     init.qcom.rc \
     init.qcom.usb.rc \
-    init.qcom.wifi.sh \
     ueventd.qcom.rc
 
 # Qcom init scripts for /etc
@@ -185,6 +184,10 @@ PRODUCT_PACKAGES += \
 # QCOM rngd
 PRODUCT_PACKAGES += \
     qrngd
+
+# Thermal
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/thermal-engine.conf:system/etc/thermal-engine.conf
 
 # Torch
 PRODUCT_PACKAGES += \
